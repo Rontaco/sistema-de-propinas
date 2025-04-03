@@ -1,0 +1,145 @@
+        body {
+    background-color: #f8f9fa;
+    transition: background-color 0.3s ease;
+}
+
+h1, h3 {
+    color: #343a40;
+    transition: color 0.3s ease;
+}
+
+h1 {
+    font-size: 36px;
+}
+
+h3 {
+    font-size: 24px;
+}
+
+textarea {
+    resize: none;
+}
+
+.table th, .table td {
+    text-align: center;
+}
+
+.versionActual {
+    font-size: 10px;
+}
+
+/* Tema alternativo */
+.alt-theme {
+    background-color: #523874;
+    color: #ffffff;
+}
+
+/* Encabezados */
+.alt-theme h1, .alt-theme h3 {
+    color: #ffffff;
+}
+
+/* Botones */
+.alt-theme .btn-primary {
+    background-color: #adf182;
+    border-color: #adf182;
+    color: #523874;
+}
+
+.alt-theme .btn-danger {
+    background-color: #dc7d68;
+    border-color: #dc7d68;
+    color: #ffffff;
+}
+
+/* Tablas */
+.alt-theme .table {
+    background-color: #674b9e; /* Violeta más claro */
+}
+
+.alt-theme .table th, 
+.alt-theme .table td {
+    background-color: #674b9e;
+    color: #ffffff;
+}
+
+/* Inputs y textareas */
+.alt-theme .form-control {
+    background-color: #ffffff;
+    color: #523874;
+    border-color: #adf182;
+}
+
+/* Penalización y otros elementos */
+.alt-theme #penalizacionContainer {
+    background-color: #916cad;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+/* Botón Calcular (naranja) */
+.alt-theme #calcularPropina, 
+#calcularPropina {
+    background-color: #dc7d68;
+    border-color: #dc7d68;
+    color: #ffffff;
+}
+#toggleTheme {
+    width: 40px; /* Ajusta el tamaño según necesites */
+    height: 40px;
+    background-image: url('img/switch.png');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+/* Efecto cuando se presiona */
+#toggleTheme:active {
+    transform: scale(0.9);
+}
+/* Tema alternativo */
+.alt-theme {
+    background-color: #523874;
+    color: #ffffff;
+    font-family: "Times New Roman", Times, serif; /* Cambia la fuente */
+}
+
+/* También afecta a los textos dentro de tablas, inputs, botones */
+.alt-theme h1, 
+.alt-theme h3, 
+.alt-theme .table, 
+.alt-theme .form-control, 
+.alt-theme button, 
+.alt-theme textarea {
+    font-family: "Times New Roman", Times, serif;
+}
+
+:root {
+    --primary-color: #3498db;
+    --secondary-color: #2c3e50;
+    --background-color: #ecf0f1;
+    --text-color: #333;
+    --font-size-base: 16px;
+  }
+  
+  [data-theme='alt'] {
+    --primary-color: #e74c3c;
+    --secondary-color: #8e44ad;
+    --background-color: #f5e6e8;
+    --text-color: #222;
+    --font-size-base: 18px; /* Ajuste para hacer el texto más grande en el tema alternativo */
+  }
+  
+  body {
+    background-color: var(--background-color);
+    color: var(--text-color);
+    font-size: var(--font-size-base);
+  }
+  .alt-theme #penalizacionContainer {
+    background-color: transparent; /* Antes: #916cad */
+    padding: 10px;
+    border-radius: 8px;
+}

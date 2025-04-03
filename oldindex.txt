@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Propinas</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        .container { display: flex; justify-content: center; gap: 20px; margin-bottom: 20px; }
+        .grupo { display: flex; flex-direction: column; align-items: center; }
+        textarea { width: 250px; height: 100px; }
+        table { width: 50%; margin-top: 20px; border-collapse: collapse; margin-left: auto; margin-right: auto; }
+        th, td { border: 1px solid black; padding: 8px; text-align: center; }
+        input, select { text-align: center; }
+        
+        /* Estilos para propina total */
+        .input-propina {
+            font-size: 1.5rem;
+            width: 200px;
+            padding: 8px;
+            text-align: center;
+        }
+        .label-propina {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Sistema de Propinas</h1>
+    
+    <label class="label-propina">Propina Total: $</label>
+    <input type="number" id="propinaTotal" value="0" class="input-propina">
+    
+    <div class="container">
+        <div class="grupo">
+            <h3>Grupo 4 Puntos</h3>
+            <textarea id="grupo4"></textarea>
+        </div>
+        <div class="grupo">
+            <h3>Grupo 3 Puntos</h3>
+            <textarea id="grupo3"></textarea>
+        </div>
+        <div class="grupo">
+            <h3>Grupo 2 Puntos</h3>
+            <textarea id="grupo2"></textarea>
+        </div>
+    </div>
+    
+    <button onclick="procesarParticipantes()">Procesar Participantes</button>
+    
+    <h3>Penalizaciones</h3>
+    <label><input type="checkbox" id="activarPenalizacion" onchange="togglePenalizacion()"> Activar Penalizaciones</label>
+    <select id="penalizado" disabled></select>
+    <input type="number" id="puntosPenalizacion" min="1" max="4" value="1" disabled>
+    <button onclick="aplicarPenalizacion()" disabled id="btnPenalizar">Aplicar Penalización</button>
+    
+    <h3>Penalizaciones Aplicadas</h3>
+    <ul id="listaPenalizaciones"></ul>
+    
+    <h3>Total de Puntos</h3>
+    <p id="totalPuntos">0</p>
+    <h3>Propina por Punto</h3>
+    <p id="propinaPorPunto">$0.00</p>
+    
+    <table>
+        <tr>
+            <th>Nombre</th>
+            <th>Puntos Finales</th>
+            <th>Propina</th>
+        </tr>
+        <tbody id="tablaParticipantes"></tbody>
+    </table>
+    <button onclick="calcularPropina()">Calcular Propina</button>
+    
+    <script>
+        let participantes = [];
+
+        // Recuperar nombres de grupos desde localStorage
+        window.onload = function() {
+            if (localStorage.getItem('grupo4')) {
+                document.getElementById('grupo4').value = localStorage.getItem('grupo4');
+            }
+            if (localStorage.getItem('grupo3')) {
+                document.getElementById('grupo3').value = localStorage.getItem('grupo3');
+            }
+            if (localStorage.getItem('grupo2')) {
+                document.getElementById('grupo2').value = localStorage.getItem('grupo2');
+            }
+        }
+
+        function procesarParticipantes() {
+            // Guardar los valores de los campos de texto en localStorage
+            localStorage.setItem('grupo4', document.getElementById('grupo4').value);
+            localStorage.setItem('grupo3', document.getElementById('grupo3').value);
+            localStorage.setItem('grupo2', document.getElementById('grupo2').value);
+            
+            participantes = [];
+            document.getElementById("listaPenalizaciones").innerHTML = "";
+            agregarGrupo('grupo4', 4);
+            agregarGrupo('grupo3', 3);
+            agregarGrupo('grupo2', 2);
+            renderizarTabla();
+        }
+
+        function agregarGrupo(id, puntos) {
+            const nombres = document.getElementById(id).value.split('\n').filter(n => n.trim() !== '');
+            nombres.forEach(nombre => {
+                participantes.push({ nombre, puntos, penalizacion: 0 });
+            });
+        }
+
+        function renderizarTabla() {
+            const tabla = document.getElementById('tablaParticipantes');
+            tabla.innerHTML = '';
+            const select = document.getElementById('penalizado');
+            select.innerHTML = '';
+            
+            participantes.forEach((p, index) => {
+                const puntosFinales = Math.max(0, p.puntos - p.penalizacion);
+                tabla.innerHTML += `
+                    <tr>
+                        <td>${p.nombre}</td>
+                        <td>${puntosFinales}</td>
+                        <td id="propina-${index}">$0</td>
+                    </tr>
+                `;
+                let option = document.createElement('option');
+                option.value = index;
+                option.textContent = p.nombre;
+                select.appendChild(option);
+            });
+        }
+
+        function togglePenalizacion() {
+            const estado = document.getElementById('activarPenalizacion').checked;
+            document.getElementById('penalizado').disabled = !estado;
+            document.getElementById('puntosPenalizacion').disabled = !estado;
+            document.getElementById('btnPenalizar').disabled = !estado;
+        }
+
+        function aplicarPenalizacion() {
+            const index = document.getElementById('penalizado').value;
+            const puntos = parseInt(document.getElementById('puntosPenalizacion').value);
+            participantes[index].penalizacion = puntos;
+            
+            const listaPenalizaciones = document.getElementById("listaPenalizaciones");
+            const penalizado = participantes[index].nombre;
+            
+            let penalizacionItem = document.createElement("li");
+            penalizacionItem.textContent = `${penalizado}: -${puntos} puntos`;
+            listaPenalizaciones.appendChild(penalizacionItem);
+            
+            renderizarTabla();
+        }
+
+        function calcularPropina() {
+            const propinaTotal = parseFloat(document.getElementById('propinaTotal').value) || 0;
+            const totalPuntos = participantes.reduce((sum, p) => sum + Math.max(0, p.puntos - p.penalizacion), 0);
+            
+            document.getElementById("totalPuntos").textContent = totalPuntos;
+
+            // Calcula la propina por punto
+            const propinaPorPunto = totalPuntos > 0 ? (propinaTotal / totalPuntos) : 0;
+            document.getElementById("propinaPorPunto").textContent = `$${propinaPorPunto.toFixed(2)}`;
+
+            participantes.forEach((p, index) => {
+                const puntosFinales = Math.max(0, p.puntos - p.penalizacion);
+                const propina = totalPuntos > 0 ? (puntosFinales / totalPuntos) * propinaTotal : 0;
+                document.getElementById(`propina-${index}`).innerText = `$${propina.toFixed(2)}`;
+            });
+        }
+    </script>
+</body>
+</html>
