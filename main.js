@@ -28,6 +28,12 @@ function procesarParticipantes() {
     
     actualizarListaPenalizados();
 }
+function eliminarPenalizacion(nombre) {
+    penalizaciones = penalizaciones.filter(p => p.nombre !== nombre);
+    sessionStorage.setItem("penalizaciones", JSON.stringify(penalizaciones));
+    actualizarListaPenalizaciones();
+    calcularPropina();
+}
 
 function actualizarListaPenalizados() {
     const selectPenalizados = document.getElementById("penalizado");
@@ -56,9 +62,14 @@ function aplicarPenalizacion() {
 function actualizarListaPenalizaciones() {
     let listaPenalizaciones = document.getElementById("listaPenalizaciones");
     let tituloPenalizaciones = document.getElementById("tituloPenalizaciones");
+
     listaPenalizaciones.innerHTML = penalizaciones.map(p => 
-        `<li class="list-group-item">${p.nombre} pierde ${p.puntos} puntos</li>`
+        `<li class="list-group-item d-flex justify-content-between align-items-center">
+            ${p.nombre} pierde ${p.puntos} puntos
+            <button class="btn btn-sm btn-danger ms-2" onclick="eliminarPenalizacion('${p.nombre}')">❌</button>
+        </li>`
     ).join("");
+
     listaPenalizaciones.classList.toggle("d-none", penalizaciones.length === 0);
     tituloPenalizaciones.classList.toggle("d-none", penalizaciones.length === 0);
 }
