@@ -2,8 +2,8 @@ let participantes = [];
 let penalizaciones = [];
 
 window.addEventListener("load", () => {
-    sessionStorage.removeItem("penalizaciones"); // Resetea las penalizaciones
-    penalizaciones = []; // Vacía la lista en memoria
+    sessionStorage.removeItem("penalizaciones");
+    penalizaciones = [];
     cargarGrupos();
     procesarParticipantes();
 });
@@ -25,9 +25,10 @@ function procesarParticipantes() {
             participantes.push({ nombre, puntos: parseInt(puntos) });
         });
     }
-    
-    actualizarListaPenalizados();
+
+    actualizarSelectPenalizados();
 }
+
 function eliminarPenalizacion(nombre) {
     penalizaciones = penalizaciones.filter(p => p.nombre !== nombre);
     sessionStorage.setItem("penalizaciones", JSON.stringify(penalizaciones));
@@ -35,8 +36,10 @@ function eliminarPenalizacion(nombre) {
     calcularPropina();
 }
 
-function actualizarListaPenalizados() {
+function actualizarSelectPenalizados() {
     const selectPenalizados = document.getElementById("penalizado");
+    if (!selectPenalizados) return;
+
     selectPenalizados.innerHTML = participantes
         .map(p => `<option value="${p.nombre}">${p.nombre}</option>`)
         .join("");
@@ -88,6 +91,23 @@ function calcularPropina() {
     actualizarTabla(propinaPorPunto);
 }
 
+function redondearPropinas() {
+    const filas = document.querySelectorAll("#tablaParticipantes tr");
+    let sumaRedondeada = 0;
+
+    filas.forEach(fila => {
+        const celdaPropina = fila.cells[2];
+        const propinaOriginal = parseFloat(celdaPropina.textContent.replace("$", ""));
+        const propinaRedondeada = Math.floor(propinaOriginal / 50) * 50;
+        celdaPropina.textContent = `$${propinaRedondeada}`;
+        sumaRedondeada += propinaRedondeada;
+    });
+
+    const totalPropina = parseFloat(document.getElementById("propinaTotal").value);
+    const sobrante = totalPropina - sumaRedondeada;
+    document.getElementById("propinaSobrante").textContent = `$${sobrante.toFixed(2)}`;
+}
+
 function actualizarTabla(propinaPorPunto) {
     let tablaParticipantes = document.getElementById("tablaParticipantes");
     tablaParticipantes.innerHTML = "";
@@ -110,46 +130,29 @@ function cargarGrupos() {
     document.getElementById("grupo3").value = localStorage.getItem("grupo3") || "";
     document.getElementById("grupo2").value = localStorage.getItem("grupo2") || "";
 }
+
+// Botón de tema
 document.addEventListener("DOMContentLoaded", () => {
     const toggleThemeBtn = document.createElement("button");
 
-    // Agregar clases de Bootstrap si las necesitas
     toggleThemeBtn.classList.add("btn", "mt-3");
-
-    // Posición fija en la pantalla
     toggleThemeBtn.style.position = "fixed";
     toggleThemeBtn.style.bottom = "20px";
     toggleThemeBtn.style.right = "20px";
-
-    // Tamaño del botón
     toggleThemeBtn.style.width = "40px";
     toggleThemeBtn.style.height = "40px";
-
-    // Agregar imagen de fondo
     toggleThemeBtn.style.backgroundImage = "url('img/switch.png')";
     toggleThemeBtn.style.backgroundSize = "cover";
     toggleThemeBtn.style.backgroundRepeat = "no-repeat";
     toggleThemeBtn.style.backgroundPosition = "center";
-
-    // Fondo negro en el modo estándar
     toggleThemeBtn.style.backgroundColor = "#000000";
-
-    // Quitar el borde y cambiar cursor
     toggleThemeBtn.style.border = "none";
     toggleThemeBtn.style.cursor = "pointer";
 
-    // Agregar botón al body
     document.body.appendChild(toggleThemeBtn);
 
-    // Alternar el tema al hacer clic
     toggleThemeBtn.addEventListener("click", () => {
         document.body.classList.toggle("alt-theme");
-
-        // Cambiar el fondo del botón según el tema
-        if (document.body.classList.contains("alt-theme")) {
-            toggleThemeBtn.style.backgroundColor = "transparent"; // Sin fondo en tema alternativo
-        } else {
-            toggleThemeBtn.style.backgroundColor = "#000000"; // Fondo negro en el modo estándar
-        }
+        toggleThemeBtn.style.backgroundColor = document.body.classList.contains("alt-theme") ? "transparent" : "#000000";
     });
 });
