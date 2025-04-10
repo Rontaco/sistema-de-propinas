@@ -148,3 +148,16 @@ textarea {
     border-color: #adf182;
     color: #523874;
 }
+/* Tema alternativo - botón entregado */
+.alt-theme .btn-success {
+    background-color: #adf182;
+    border-color: #adf182;
+    color: #523874;
+}
+
+/* Tema alternativo - botón no entregado */
+.alt-theme .btn-outline-secondary {
+    background-color: transparent;
+    border-color: #fff;
+    color: #fff;
+}

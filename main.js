@@ -115,9 +115,29 @@ function actualizarTabla(propinaPorPunto) {
         let penalizacion = penalizaciones.find(pen => pen.nombre === p.nombre);
         let puntosFinales = penalizacion ? Math.max(0, p.puntos - penalizacion.puntos) : p.puntos;
         let propina = (puntosFinales * propinaPorPunto).toFixed(2);
-        let row = `<tr><td>${p.nombre}</td><td>${puntosFinales}</td><td>$${propina}</td></tr>`;
+        let row = `<tr>
+            <td>${p.nombre}</td>
+            <td>${puntosFinales}</td>
+            <td>$${propina}</td>
+            <td>
+                <button class="btn btn-sm btn-secondary" onclick="toggleEntregado(this)">❌ No entregado</button>   
+            </td>
+        </tr>`;
+
         tablaParticipantes.innerHTML += row;
     });
+}
+
+function toggleEntregado(boton) {
+    if (boton.classList.contains("btn-success")) {
+        boton.classList.remove("btn-success");
+        boton.classList.add("btn-secondary");
+        boton.textContent = "❌ No entregado";
+    } else {
+        boton.classList.remove("btn-secondary");
+        boton.classList.add("btn-success");
+        boton.textContent = "✅ Entregado";
+    }
 }
 
 function togglePenalizacion() {
