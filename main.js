@@ -176,3 +176,15 @@ document.addEventListener("DOMContentLoaded", () => {
         toggleThemeBtn.style.backgroundColor = document.body.classList.contains("alt-theme") ? "transparent" : "#000000";
     });
 });
+
+//Función para imprimir tabla
+function exportarTablaComoImagen() {
+    const tabla = document.getElementById("tablaParticipantes");
+    html2canvas(tabla).then(canvas => {
+        // Crear un link para descargar
+        const link = document.createElement('a');
+        link.download = `propinas_${new Date().toISOString().slice(0,10)}.png`;
+        link.href = canvas.toDataURL();
+        link.click();
+    });
+}
