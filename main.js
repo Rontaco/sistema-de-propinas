@@ -119,7 +119,7 @@ function actualizarTabla(propinaPorPunto) {
             <td>${p.nombre}</td>
             <td>${puntosFinales}</td>
             <td>$${propina}</td>
-            <td>
+            <td class="col-entregado">
                 <button class="btn btn-sm btn-secondary" onclick="toggleEntregado(this)">❌ No entregado</button>   
             </td>
         </tr>`;
@@ -179,12 +179,59 @@ document.addEventListener("DOMContentLoaded", () => {
 
 //Función para imprimir tabla
 function exportarTablaComoImagen() {
-    const tabla = document.getElementById("tablaParticipantes");
-    html2canvas(tabla).then(canvas => {
-        // Crear un link para descargar
-        const link = document.createElement('a');
+    const tablaOriginal = document.getElementById("tablaParticipantes");
+
+    // Crear un contenedor temporal fuera de vista
+    const tempDiv = document.createElement("div");
+    tempDiv.style.position = "fixed";
+    tempDiv.style.top = "-9999px";
+    tempDiv.style.left = "-9999px";
+    document.body.appendChild(tempDiv);
+
+    // Crear una tabla nueva
+    const tablaClon = document.createElement("table");
+    tablaClon.className = tablaOriginal.className; // mantener estilos Bootstrap
+    tablaClon.style.borderCollapse = "collapse";
+    tablaClon.style.backgroundColor = "white"; // asegurar fondo blanco
+
+    // Agregar encabezados (sin columna Entregado)
+    const encabezadosOriginales = document.querySelectorAll("#tablaEncabezados th");
+    const filaEncabezados = document.createElement("tr");
+    encabezadosOriginales.forEach((th, index) => {
+        if (index !== 3) { // Excluir columna Entregado
+            const thClon = th.cloneNode(true);
+            filaEncabezados.appendChild(thClon);
+        }
+    });
+    tablaClon.appendChild(filaEncabezados);
+
+    // Clonar filas de datos, excluyendo la columna Entregado (índice 3)
+    tablaOriginal.querySelectorAll("tr").forEach(row => {
+        const celdas = row.querySelectorAll("td");
+        if (celdas.length > 0) {
+            const filaNueva = document.createElement("tr");
+            celdas.forEach((td, index) => {
+                if (index !== 3) { // Excluir columna Entregado
+                    const tdClon = td.cloneNode(true);
+                    filaNueva.appendChild(tdClon);
+                }
+            });
+            tablaClon.appendChild(filaNueva);
+        }
+    });
+
+    // Agregar tabla al contenedor oculto
+    tempDiv.appendChild(tablaClon);
+
+    // Capturar imagen
+    html2canvas(tablaClon).then(canvas => {
+        const link = document.createElement("a");
         link.download = `propinas_${new Date().toISOString().slice(0,10)}.png`;
         link.href = canvas.toDataURL();
         link.click();
+
+        // Limpiar
+        document.body.removeChild(tempDiv);
     });
 }
+
