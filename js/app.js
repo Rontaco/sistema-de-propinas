@@ -5,6 +5,7 @@ import { calcularPropina, redondearPropinas } from "./propinas.js";
 import { toggleEntregado } from "./entregado.js";
 import { exportarTablaComoImagen } from "./exportar.js";
 import "./tema.js"; // solo ejecuta, no exporta
+import html2canvas from "https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/+esm";
 
 // Asignar funciones a window si las necesita el HTML (por ejemplo desde onclick)
 window.aplicarPenalizacion = aplicarPenalizacion;
