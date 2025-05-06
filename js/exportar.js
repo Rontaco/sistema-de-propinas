@@ -42,8 +42,8 @@ export function exportarTablaComoImagen() {
 
     html2canvas(contenedor).then((canvas) => {
         const link = document.createElement("a");
-        link.download = `propinas_${fecha.replaceAll("/", "-")}.png`;
-        link.href = canvas.toDataURL("image/png");
+        link.download = `propinas_${fecha.replaceAll("/", "-")}.jpg`; // cambio a .jpg
+        link.href = canvas.toDataURL("image/jpeg", 0.95); // cambio a JPEG y 95% calidad
         link.click();
         document.body.removeChild(contenedor);
     });
